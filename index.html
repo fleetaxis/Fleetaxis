@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#050507">
+<title>FleetAxis — Unified Transportation Compliance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --bg-elev: #0D0D12;
+    --bg-card: #111118;
+    --bg-charcoal: #1A1A24;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --border-purple: rgba(139,92,246,0.25);
+    --text: #F8F8FB;
+    --text-dim: #9A9AAB;
+    --text-faint: #5C5C6E;
+    --accent: #7C3AED;
+    --accent-hot: #9333EA;
+    --accent-deep: #5B21B6;
+    --accent-bright: #A855F7;
+    --accent-electric: #C084FC;
+    --success: #6EE7B7;
+    --warn: #FBBF24;
+    --danger: #FB7185;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html {
+    scroll-behavior: smooth;
+    background-color: #050507 !important;
+    color-scheme: dark;
+  }
+  html, body {
+    background-color: #050507 !important;
+  }
+  body {
+    background: #050507 !important;
+    color: #F8F8FB;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  ::selection { background: var(--accent); color: white; }
+
+  /* ============ NAV ============ */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(5, 5, 7, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+  .logo-mark {
+    width: 26px; height: 26px;
+    position: relative;
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .nav-links a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 9px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-dim);
+  }
+  .btn-ghost:hover { color: var(--text); }
+  .btn-primary {
+    background: var(--text);
+    color: var(--bg);
+    font-weight: 600;
+  }
+  .btn-primary:hover {
+    background: var(--accent-electric);
+    color: white;
+  }
+  .btn-accent {
+    background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 0 0 1px rgba(168,85,247,0.4), 0 8px 28px -6px rgba(124,58,237,0.7);
+  }
+  .btn-accent:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 0 1px rgba(168,85,247,0.6), 0 14px 36px -6px rgba(124,58,237,0.9);
+  }
+  .btn-large {
+    padding: 14px 26px;
+    font-size: 15px;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    padding: 140px 48px 80px;
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 64px;
+    align-items: center;
+    overflow: hidden;
+    background-color: #050507;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero-bg::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(124,58,237,0.32) 0%, transparent 60%);
+    filter: blur(40px);
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(91,33,182,0.28) 0%, transparent 60%);
+    filter: blur(40px);
+  }
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-electric);
+    padding: 6px 12px;
+    border: 1px solid rgba(168,85,247,0.5);
+    border-radius: 100px;
+    background: rgba(124,58,237,0.15);
+    margin-bottom: 28px;
+    box-shadow: 0 0 20px rgba(124,58,237,0.15);
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px;
+    background: var(--accent-electric);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(192,132,252,0.8);
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(192,132,252,0.6), 0 0 8px rgba(192,132,252,0.8); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(192,132,252,0), 0 0 8px rgba(192,132,252,0.8); }
+  }
+
+  h1 {
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: clamp(48px, 6vw, 80px);
+    font-weight: 600;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    margin-bottom: 28px;
+    color: #FFFFFF;
+  }
+  h1 em {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #C084FC;
+    background: linear-gradient(135deg, #C084FC 0%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(192,132,252,0.4));
+  }
+
+  .hero-sub {
+    font-size: 19px;
+    color: #B8B8C8;
+    line-height: 1.55;
+    max-width: 540px;
+    margin-bottom: 40px;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 56px;
+  }
+
+  .agency-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 540px;
+  }
+  .agency-rail-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .agency-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .agency-list span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .agency-list span::before {
+    content: '';
+    width: 5px; height: 5px;
+    background: var(--accent-electric);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(192,132,252,0.8);
+  }
+
+  /* ============ HERO RADAR ============ */
+  .radar {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 580px;
+    justify-self: center;
+    animation: fadeIn 1.4s 0.3s ease-out backwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .radar-svg {
+    width: 100%; height: 100%;
+    overflow: visible;
+  }
+  .radar-ring {
+    fill: none;
+    stroke: rgba(255,255,255,0.06);
+    stroke-width: 1;
+  }
+  .radar-ring-active {
+    fill: none;
+    stroke: url(#radarGrad);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 8;
+    transform-origin: center;
+    animation: rotate 60s linear infinite;
+  }
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .radar-sweep {
+    transform-origin: center;
+    animation: sweep 8s linear infinite;
+  }
+  @keyframes sweep {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .radar-axis {
+    transform-origin: center;
+    animation: rotate 30s linear infinite reverse;
+  }
+  .axis-spoke {
+    stroke: white;
+    stroke-width: 3;
+    stroke-linecap: round;
+    fill: none;
+  }
+  .axis-center {
+    fill: var(--accent-electric);
+    filter: drop-shadow(0 0 12px rgba(192,132,252,0.9));
+  }
+
+  .deadline-card {
+    position: absolute;
+    background: rgba(20,20,31,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 12px 14px;
+    min-width: 180px;
+    animation: float 6s ease-in-out infinite;
+  }
+  .deadline-card:nth-child(2) { animation-delay: -2s; }
+  .deadline-card:nth-child(3) { animation-delay: -4s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .dc-1 { top: 8%; left: -8%; }
+  .dc-2 { top: 42%; right: -12%; }
+  .dc-3 { bottom: 12%; left: -4%; }
+
+  .dc-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+  }
+  .dc-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .dc-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+  }
+  .dc-status-ok { color: var(--success); }
+  .dc-status-warn { color: var(--warn); }
+  .dc-status-danger { color: var(--danger); }
+  .dc-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+  }
+
+  /* ============ MARQUEE ============ */
+  .marquee {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    padding: 22px 0;
+    background: rgba(255,255,255,0.01);
+  }
+  .marquee-label {
+    text-align: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 16px;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 64px;
+    animation: marquee 40s linear infinite;
+    white-space: nowrap;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .marquee-item {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .marquee-item::after {
+    content: '';
+    width: 5px; height: 5px;
+    background: var(--accent-electric);
+    border-radius: 50%;
+    margin-left: 64px;
+    box-shadow: 0 0 8px rgba(192,132,252,0.7);
+  }
+
+  /* ============ SECTION SHARED ============ */
+  section {
+    padding: 120px 48px;
+    position: relative;
+    background-color: #050507;
+  }
+  .section-head {
+    max-width: 760px;
+    margin: 0 auto 72px;
+    text-align: center;
+  }
+  .section-eyebrow {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-electric);
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(192,132,252,0.4);
+  }
+  h2 {
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: clamp(36px, 4.5vw, 56px);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+  }
+  h2 em {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: #C084FC;
+    text-shadow: 0 0 30px rgba(192,132,252,0.4);
+  }
+  .section-sub {
+    font-size: 18px;
+    color: #B8B8C8;
+    line-height: 1.55;
+  }
+
+  /* ============ PROBLEM ============ */
+  .problem-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: stretch;
+  }
+  .problem-card {
+    background: #0A0A10;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .problem-card.bad::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 0% 0%, rgba(251,113,133,0.10) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .problem-card.good {
+    border-color: rgba(139,92,246,0.3);
+    box-shadow: 0 0 0 1px rgba(139,92,246,0.1), 0 20px 60px -20px rgba(124,58,237,0.4);
+  }
+  .problem-card.good::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 100% 100%, rgba(124,58,237,0.18) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .problem-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .problem-card.bad .problem-tag {
+    background: rgba(251,113,133,0.12);
+    color: #FB7185;
+    border: 1px solid rgba(251,113,133,0.3);
+    font-weight: 600;
+  }
+  .problem-card.good .problem-tag {
+    background: rgba(124,58,237,0.2);
+    color: var(--accent-electric);
+    border: 1px solid rgba(168,85,247,0.5);
+    font-weight: 600;
+  }
+  .problem-card h3 {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .problem-list {
+    list-style: none;
+    position: relative;
+  }
+  .problem-list li {
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+    color: var(--text-dim);
+    padding: 14px 0;
+    border-bottom: 1px dashed var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .problem-list li:last-child { border-bottom: none; }
+  .problem-card.bad .problem-list li::before {
+    content: '×';
+    color: var(--danger);
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .problem-card.good .problem-list li::before {
+    content: '→';
+    color: var(--accent-electric);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  /* ============ MODULES ============ */
+  .modules {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .modules::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 1000px; height: 400px;
+    background: radial-gradient(ellipse, rgba(124,58,237,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .modules-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .module {
+    background: var(--bg-charcoal);
+    padding: 36px 32px;
+    transition: background 0.3s, border-color 0.3s;
+    position: relative;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+  }
+  .module:hover {
+    background: #221530;
+  }
+  .module:hover .module-icon {
+    color: var(--accent-electric);
+    filter: drop-shadow(0 0 12px rgba(168,85,247,0.5));
+  }
+  .module-num {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-bottom: 20px;
+  }
+  .module-icon {
+    width: 36px; height: 36px;
+    margin-bottom: 24px;
+    color: var(--accent-bright);
+    transition: color 0.3s, filter 0.3s;
+  }
+  .module-icon svg { width: 100%; height: 100%; }
+  .module h3 {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+  .module p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+  .module-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .module-tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-dim);
+    padding: 4px 9px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  /* ============ DASHBOARD ============ */
+  .dashboard-section {
+    padding: 120px 48px 60px;
+  }
+  .dashboard-frame {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--bg-charcoal);
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(168,85,247,0.2);
+    position: relative;
+  }
+  .dashboard-frame::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, rgba(168,85,247,0.5), transparent 40%, transparent 60%, rgba(124,58,237,0.4));
+    border-radius: 20px;
+    z-index: -1;
+    filter: blur(24px);
+    opacity: 0.7;
+  }
+  .db-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+  .db-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+  }
+  .db-url {
+    margin-left: 12px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .db-body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 500px;
+  }
+  .db-sidebar {
+    border-right: 1px solid var(--border);
+    padding: 20px 14px;
+  }
+  .db-sb-section {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    padding: 14px 10px 8px;
+  }
+  .db-sb-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+    cursor: pointer;
+  }
+  .db-sb-item.active {
+    background: rgba(124,58,237,0.2);
+    color: var(--text);
+    border: 1px solid rgba(168,85,247,0.5);
+  }
+  .db-sb-item-icon {
+    width: 14px; height: 14px;
+    opacity: 0.7;
+  }
+  .db-main {
+    padding: 28px 32px;
+  }
+  .db-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .db-h-title {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .db-h-meta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .db-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .db-stat {
+    padding: 18px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .db-stat-label {
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 8px;
+  }
+  .db-stat-val {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-family: 'Geist', sans-serif;
+  }
+  .db-stat-val.warn { color: var(--warn); }
+  .db-stat-val.danger { color: var(--danger); }
+  .db-stat-val.success { color: var(--success); }
+  .db-stat-sub {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 4px;
+  }
+
+  .db-table-h {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 110px;
+    gap: 16px;
+    padding: 12px 16px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    border-bottom: 1px solid var(--border);
+  }
+  .db-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 110px;
+    gap: 16px;
+    padding: 14px 16px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .db-row:hover { background: rgba(255,255,255,0.02); }
+  .db-cell-strong { color: var(--text); }
+  .db-cell-mono { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--text-dim); }
+  .db-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    border: 1px solid;
+  }
+  .db-pill-ok { color: var(--success); border-color: rgba(110,231,183,0.25); background: rgba(110,231,183,0.06); }
+  .db-pill-warn { color: var(--warn); border-color: rgba(251,191,36,0.25); background: rgba(251,191,36,0.06); }
+  .db-pill-danger { color: var(--danger); border-color: rgba(251,113,133,0.25); background: rgba(251,113,133,0.06); }
+  .db-action {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent-electric);
+    text-align: right;
+    cursor: pointer;
+  }
+
+  /* ============ PRICING ============ */
+  .pricing-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .price-card {
+    background: #0A0A10;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 32px;
+    position: relative;
+    transition: all 0.3s;
+  }
+  .price-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+  }
+  .price-card.featured {
+    background: linear-gradient(180deg, #1A0F2E 0%, #0A0A10 100%);
+    border-color: rgba(139,92,246,0.5);
+    box-shadow: 0 0 0 1px rgba(139,92,246,0.2), 0 30px 80px -20px rgba(124,58,237,0.5);
+  }
+  .price-card.featured::before {
+    content: 'Most popular';
+    position: absolute;
+    top: -10px;
+    left: 32px;
+    background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+    color: white;
+    padding: 5px 14px;
+    border-radius: 100px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: 0 6px 20px -2px rgba(124,58,237,0.6);
+  }
+  .price-name {
+    font-size: 14px;
+    font-family: 'Geist Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+  .price-amount {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .price-amount .currency {
+    font-size: 22px;
+    color: var(--text-dim);
+    font-weight: 400;
+  }
+  .price-amount .num {
+    font-size: 56px;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .price-amount .period {
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .price-fleet {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .price-features {
+    list-style: none;
+    margin-bottom: 32px;
+  }
+  .price-features li {
+    font-size: 14px;
+    color: var(--text-dim);
+    padding: 8px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .price-features li::before {
+    content: '';
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: rgba(168,85,247,0.2);
+    border: 1.5px solid rgba(168,85,247,0.6);
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+  }
+  .price-features li::after {
+    content: '';
+    position: absolute;
+    width: 4px; height: 7px;
+    border-right: 2px solid var(--accent-electric);
+    border-bottom: 2px solid var(--accent-electric);
+    transform: rotate(45deg);
+    margin-left: 6px;
+    margin-top: 4px;
+  }
+  .price-card.featured .price-cta {
+    background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 8px 24px -6px rgba(124,58,237,0.7);
+  }
+  .price-card.featured .price-cta:hover {
+    box-shadow: 0 12px 32px -6px rgba(124,58,237,0.9);
+  }
+  .price-cta {
+    display: block;
+    text-align: center;
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .price-card:not(.featured) .price-cta {
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .price-card:not(.featured) .price-cta:hover {
+    background: rgba(255,255,255,0.08);
+  }
+
+  .pricing-note {
+    text-align: center;
+    margin-top: 40px;
+    font-family: 'Geist Mono', monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  /* ============ CTA ============ */
+  .cta {
+    padding: 140px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(124,58,237,0.3) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .cta-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .cta h2 {
+    margin-bottom: 24px;
+  }
+  .cta-form {
+    display: flex;
+    gap: 8px;
+    max-width: 480px;
+    margin: 36px auto 0;
+    padding: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+  }
+  .cta-form input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Geist Mono', monospace;
+    font-size: 14px;
+    outline: none;
+  }
+  .cta-form input::placeholder { color: var(--text-faint); }
+  .cta-form button {
+    background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%);
+    color: white;
+    border: none;
+    padding: 0 22px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 6px 20px -4px rgba(124,58,237,0.7);
+    transition: all 0.2s;
+  }
+  .cta-form button:hover {
+    box-shadow: 0 10px 28px -4px rgba(124,58,237,0.9);
+  }
+  .cta-tag {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 16px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 60px 48px 40px;
+  }
+  .footer-grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-brand {
+    max-width: 320px;
+  }
+  .footer-tag {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 14px;
+    line-height: 1.55;
+  }
+  .footer-col h4 {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 16px;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li {
+    padding: 5px 0;
+  }
+  .footer-col a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--text); }
+  .footer-bottom {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 968px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 120px 24px 60px;
+      gap: 56px;
+    }
+    .radar { max-width: 380px; }
+    .deadline-card { display: none; }
+    section { padding: 80px 24px; }
+    .problem-grid, .modules-grid, .pricing-grid {
+      grid-template-columns: 1fr;
+    }
+    .db-body { grid-template-columns: 1fr; }
+    .db-sidebar { display: none; }
+    .db-stats { grid-template-columns: 1fr 1fr; }
+    .db-table-h, .db-row { grid-template-columns: 2fr 1fr 1fr; }
+    .db-table-h > *:nth-child(4),
+    .db-table-h > *:nth-child(5),
+    .db-row > *:nth-child(4),
+    .db-row > *:nth-child(5) { display: none; }
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .cta { padding: 80px 24px; }
+    .cta-form { flex-direction: column; padding: 12px; }
+    .cta-form button { padding: 12px; }
+    /* Audience cards & verification mockup mobile */
+    [style*="grid-template-columns: repeat(3, 1fr)"] {
+      grid-template-columns: 1fr !important;
+    }
+    [style*="grid-template-columns: 1.3fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+    [style*="border-right: 1px solid rgba(255,255,255,0.06)"] {
+      border-right: none !important;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+  }
+</style>
+</head>
+<body style="background: #050507; color: #F8F8FB; margin: 0;">
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="logo">
+    <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="16" r="14" stroke="white" stroke-width="0.5" opacity="0.3"/>
+      <circle cx="16" cy="16" r="11" stroke="#A855F7" stroke-width="0.8" opacity="0.5"/>
+      <line x1="16" y1="16" x2="16" y2="3" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="16" y1="16" x2="27.3" y2="22.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <line x1="16" y1="16" x2="4.7" y2="22.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="16" cy="16" r="2.5" fill="#A855F7"/>
+    </svg>
+    FleetAxis
+  </div>
+  <ul class="nav-links">
+    <li><a href="#platform">Platform</a></li>
+    <li><a href="#coverage">Compliance</a></li>
+    <li><a href="#dashboard">Verify</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#">Resources</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" class="btn btn-ghost">Sign in</a>
+    <a href="#cta" class="btn btn-primary">Free verification</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" style="background: #050507;">
+  <div class="hero-bg">
+    <div class="grid-overlay"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="eyebrow">
+      <span class="eyebrow-dot"></span>
+      Unified Transportation Compliance
+    </div>
+    <h1 style="color: #FFFFFF;">Run your entire <em>operation</em> from one axis.</h1>
+    <p class="hero-sub">
+      The single platform for every FMCSA-regulated business — carriers, brokers, freight forwarders, and the partners who serve them. Compliance, verification, onboarding, document exchange, invoicing, and a trusted partner network. Everything that used to live in fifteen tools, in one place.
+    </p>
+    <div class="hero-cta">
+      <a href="#cta" class="btn btn-accent btn-large">
+        Start free — verify any DOT or MC
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8m0 0L7 3m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </a>
+      <a href="#dashboard" class="btn btn-ghost btn-large">See the platform →</a>
+    </div>
+    <div class="agency-rail">
+      <div class="agency-rail-label">Connected to the agencies, underwriters, and records that matter</div>
+      <div class="agency-list">
+        <span>FMCSA</span>
+        <span>SAFER</span>
+        <span>IRS</span>
+        <span>UCR</span>
+        <span>IRP</span>
+        <span>IFTA</span>
+        <span>Clearinghouse</span>
+        <span>50 State DOTs</span>
+        <span>Insurance carriers</span>
+        <span>Factoring companies</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="radar">
+    <svg class="radar-svg" viewBox="0 0 500 500">
+      <defs>
+        <linearGradient id="radarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#7C3AED" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#C084FC" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="sweepGrad" x1="50%" y1="50%" x2="100%" y2="50%">
+          <stop offset="0%" stop-color="#A855F7" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#A855F7" stop-opacity="0"/>
+        </linearGradient>
+        <radialGradient id="centerGlow">
+          <stop offset="0%" stop-color="#A855F7" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- Glow background -->
+      <circle cx="250" cy="250" r="180" fill="url(#centerGlow)" opacity="0.4"/>
+
+      <!-- Concentric rings -->
+      <circle class="radar-ring" cx="250" cy="250" r="240"/>
+      <circle class="radar-ring" cx="250" cy="250" r="190"/>
+      <circle class="radar-ring" cx="250" cy="250" r="140"/>
+      <circle class="radar-ring" cx="250" cy="250" r="90"/>
+
+      <!-- Animated dashed ring -->
+      <circle class="radar-ring-active" cx="250" cy="250" r="215"/>
+
+      <!-- Sweep beam -->
+      <g class="radar-sweep">
+        <path d="M 250 250 L 490 250 A 240 240 0 0 0 425 81 Z" fill="url(#sweepGrad)" opacity="0.3"/>
+      </g>
+
+      <!-- Orbit nodes (compliance categories) -->
+      <g opacity="1" filter="url(#nodeGlow)">
+        <!-- FMCSA - top -->
+        <circle cx="250" cy="60" r="6" fill="#A855F7"/>
+        <text x="250" y="44" font-family="Geist Mono" font-size="10" fill="#8A8A99" text-anchor="middle" letter-spacing="0.1em">FMCSA</text>
+
+        <!-- DOT - top right -->
+        <circle cx="384" cy="116" r="6" fill="#A855F7"/>
+        <text x="396" y="108" font-family="Geist Mono" font-size="10" fill="#8A8A99" letter-spacing="0.1em">USDOT</text>
+
+        <!-- State Agencies -->
+        <circle cx="440" cy="250" r="6" fill="#A855F7"/>
+        <text x="455" y="254" font-family="Geist Mono" font-size="10" fill="#8A8A99" letter-spacing="0.1em">STATE DOTs</text>
+
+        <!-- IFTA -->
+        <circle cx="384" cy="384" r="6" fill="#A855F7"/>
+        <text x="396" y="396" font-family="Geist Mono" font-size="10" fill="#8A8A99" letter-spacing="0.1em">IFTA</text>
+
+        <!-- IRP - bottom -->
+        <circle cx="250" cy="440" r="6" fill="#A855F7"/>
+        <text x="250" y="462" font-family="Geist Mono" font-size="10" fill="#8A8A99" text-anchor="middle" letter-spacing="0.1em">IRP</text>
+
+        <!-- HVUT -->
+        <circle cx="116" cy="384" r="6" fill="#A855F7"/>
+        <text x="104" y="396" font-family="Geist Mono" font-size="10" fill="#8A8A99" text-anchor="end" letter-spacing="0.1em">HVUT 2290</text>
+
+        <!-- Clearinghouse -->
+        <circle cx="60" cy="250" r="6" fill="#A855F7"/>
+        <text x="45" y="254" font-family="Geist Mono" font-size="10" fill="#8A8A99" text-anchor="end" letter-spacing="0.1em">CLEARINGHOUSE</text>
+
+        <!-- UCR -->
+        <circle cx="116" cy="116" r="6" fill="#A855F7"/>
+        <text x="104" y="108" font-family="Geist Mono" font-size="10" fill="#8A8A99" text-anchor="end" letter-spacing="0.1em">UCR</text>
+      </g>
+
+      <!-- Center axis (echoes logo) -->
+      <g class="radar-axis">
+        <line class="axis-spoke" x1="250" y1="250" x2="250" y2="190"/>
+        <line class="axis-spoke" x1="250" y1="250" x2="302" y2="280"/>
+        <line class="axis-spoke" x1="250" y1="250" x2="198" y2="280"/>
+      </g>
+
+      <!-- Center hub -->
+      <circle cx="250" cy="250" r="28" fill="#0A0A0F" stroke="white" stroke-width="1.5"/>
+      <circle class="axis-center" cx="250" cy="250" r="8"/>
+    </svg>
+
+    <div class="deadline-card dc-1">
+      <div class="dc-label">Federal · MCS-150</div>
+      <div class="dc-title">Biennial Update</div>
+      <div class="dc-status dc-status-ok"><span class="dc-dot"></span>Filed · 13 mo remaining</div>
+    </div>
+    <div class="deadline-card dc-2">
+      <div class="dc-label">UCR · 2026</div>
+      <div class="dc-title">Annual Renewal</div>
+      <div class="dc-status dc-status-warn"><span class="dc-dot"></span>Due in 18 days</div>
+    </div>
+    <div class="deadline-card dc-3">
+      <div class="dc-label">IFTA · Q2</div>
+      <div class="dc-title">Quarterly Filing</div>
+      <div class="dc-status dc-status-danger"><span class="dc-dot"></span>Overdue · 4 days</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee">
+  <div class="marquee-label">One platform · Every workflow</div>
+  <div class="marquee-track">
+    <span class="marquee-item">FMCSA registrations</span>
+    <span class="marquee-item">UCR · IFTA · IRP renewals</span>
+    <span class="marquee-item">Carrier onboarding packets</span>
+    <span class="marquee-item">COI requests to underwriters</span>
+    <span class="marquee-item">W-9 distribution</span>
+    <span class="marquee-item">Rate confirmations</span>
+    <span class="marquee-item">Bills of lading</span>
+    <span class="marquee-item">Auto-generated invoicing</span>
+    <span class="marquee-item">Factoring company sync</span>
+    <span class="marquee-item">Driver qualification files</span>
+    <span class="marquee-item">Drug & alcohol Clearinghouse</span>
+    <span class="marquee-item">Verified partner network</span>
+    <span class="marquee-item">Identity & fraud detection</span>
+    <span class="marquee-item">Document vault</span>
+    <!-- Duplicate -->
+    <span class="marquee-item">FMCSA registrations</span>
+    <span class="marquee-item">UCR · IFTA · IRP renewals</span>
+    <span class="marquee-item">Carrier onboarding packets</span>
+    <span class="marquee-item">COI requests to underwriters</span>
+    <span class="marquee-item">W-9 distribution</span>
+    <span class="marquee-item">Rate confirmations</span>
+    <span class="marquee-item">Bills of lading</span>
+    <span class="marquee-item">Auto-generated invoicing</span>
+    <span class="marquee-item">Factoring company sync</span>
+    <span class="marquee-item">Driver qualification files</span>
+    <span class="marquee-item">Drug & alcohol Clearinghouse</span>
+    <span class="marquee-item">Verified partner network</span>
+    <span class="marquee-item">Identity & fraud detection</span>
+    <span class="marquee-item">Document vault</span>
+  </div>
+</div>
+
+<!-- ============ ENTITY TYPES ============ -->
+<section style="background: #050507; border-bottom: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden;">
+  <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1200px; height: 500px; background: radial-gradient(ellipse, rgba(124,58,237,0.10) 0%, transparent 70%); pointer-events: none; filter: blur(40px);"></div>
+  <div class="section-head" style="position: relative;">
+    <div class="section-eyebrow">Built for every entity type</div>
+    <h2 style="color: #FFFFFF;">If the FMCSA <em>regulates</em> you,<br>FleetAxis is built for you.</h2>
+    <p class="section-sub">
+      Each entity type has its own compliance burden, its own filings, its own operational workflow. FleetAxis adapts to every one — with subscription tiers and feature sets matched to what your business actually needs.
+    </p>
+  </div>
+
+  <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative;">
+
+    <!-- Motor Carrier Property -->
+    <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 26px 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at top right, rgba(168,85,247,0.10) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="position: relative;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #C084FC; margin-bottom: 12px; font-weight: 600;">MC · PROPERTY</div>
+        <h3 style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; letter-spacing: -0.01em;">Motor Carrier of Property</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.55; margin-bottom: 14px;">Regulated freight, dry van, reefer, flatbed, intermodal. The largest segment.</p>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; line-height: 1.6;">USDOT · MC · BOC-3<br>UCR · IRP · IFTA · 2290<br>BIPD insurance</div>
+      </div>
+    </div>
+
+    <!-- Motor Carrier HHG -->
+    <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 26px 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at top right, rgba(168,85,247,0.10) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="position: relative;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #C084FC; margin-bottom: 12px; font-weight: 600;">MC · HHG</div>
+        <h3 style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; letter-spacing: -0.01em;">Household Goods Carrier</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.55; margin-bottom: 14px;">Moving companies. Consumer protection rules apply, plus cargo insurance.</p>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; line-height: 1.6;">All MC + Cargo coverage<br>HHG arbitration<br>Binding estimates</div>
+      </div>
+    </div>
+
+    <!-- Passenger Carrier -->
+    <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 26px 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at top right, rgba(168,85,247,0.10) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="position: relative;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #C084FC; margin-bottom: 12px; font-weight: 600;">MC · PASSENGER</div>
+        <h3 style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; letter-spacing: -0.01em;">Passenger Carrier</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.55; margin-bottom: 14px;">Buses, motorcoach, charter, shuttle. Higher liability minimums, OP-1(P) authority.</p>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; line-height: 1.6;">$5M liability minimums<br>Drug testing programs<br>Inspections & ELD</div>
+      </div>
+    </div>
+
+    <!-- Hazmat -->
+    <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 26px 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at top right, rgba(168,85,247,0.10) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="position: relative;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #C084FC; margin-bottom: 12px; font-weight: 600;">HAZMAT</div>
+        <h3 style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; letter-spacing: -0.01em;">Hazmat Carrier</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.55; margin-bottom: 14px;">Hazmat-endorsed carriers and tankers. HM permits and PHMSA on top of FMCSA.</p>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; line-height: 1.6;">HM Safety Permit<br>HMSP renewals<br>Driver endorsements</div>
+      </div>
+    </div>
+
+    <!-- Broker -->
+    <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 26px 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at top right, rgba(168,85,247,0.10) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="position: relative;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #C084FC; margin-bottom: 12px; font-weight: 600;">BROKER</div>
+        <h3 style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; letter-spacing: -0.01em;">Property Broker</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.55; margin-bottom: 14px;">Connect shippers to carriers. $75K bond, full carrier vetting workflow.</p>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; line-height: 1.6;">BMC-84 / BMC-85 bond<br>Carrier onboarding<br>Rate cons & invoicing</div>
+      </div>
+    </div>
+
+    <!-- Freight Forwarder -->
+    <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 26px 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at top right, rgba(168,85,247,0.10) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="position: relative;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #C084FC; margin-bottom: 12px; font-weight: 600;">FREIGHT FWD.</div>
+        <h3 style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; letter-spacing: -0.01em;">Freight Forwarder</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.55; margin-bottom: 14px;">Consolidate, break-bulk, distribute. Cargo liability + carrier-style filings.</p>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; line-height: 1.6;">FF authority · OP-1(FF)<br>Cargo + BIPD insurance<br>BOL issuance</div>
+      </div>
+    </div>
+
+    <!-- IEP -->
+    <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 26px 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at top right, rgba(168,85,247,0.10) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="position: relative;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #C084FC; margin-bottom: 12px; font-weight: 600;">IEP</div>
+        <h3 style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; letter-spacing: -0.01em;">Intermodal Equipment Provider</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.55; margin-bottom: 14px;">Chassis pools, container providers. UIIA participation and equipment registration.</p>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; line-height: 1.6;">IEP USDOT · MCS-150<br>Equipment inspections<br>UIIA reporting</div>
+      </div>
+    </div>
+
+    <!-- Shipper -->
+    <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 26px 24px; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: 0; right: 0; width: 140px; height: 140px; background: radial-gradient(circle at top right, rgba(168,85,247,0.10) 0%, transparent 70%); pointer-events: none;"></div>
+      <div style="position: relative;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #C084FC; margin-bottom: 12px; font-weight: 600;">SHIPPER</div>
+        <h3 style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; letter-spacing: -0.01em;">Shipper / BCO</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.55; margin-bottom: 14px;">Verify carriers and brokers, send rate cons, receive BOLs, manage invoicing.</p>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; line-height: 1.6;">Pre-tender verification<br>Document exchange<br>Vendor records</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="max-width: 1200px; margin: 32px auto 0; text-align: center; font-family: 'Geist Mono', monospace; font-size: 12px; color: #5C5C6E; letter-spacing: 0.05em; position: relative;">
+    Also supports Cargo Tank Facilities · Dispatch Services · Mexico-domiciled Carriers (MX) · Non-NA Carriers (NNA) · Bona Fide Agents
+  </div>
+</section>
+
+<!-- ============ PROBLEM ============ -->
+<section id="platform" style="background: var(--bg-charcoal); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); position: relative; overflow: hidden;">
+  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 800px; background: radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 60%); pointer-events: none;"></div>
+  <div class="section-head" style="position: relative;">
+    <div class="section-eyebrow">The Problem</div>
+    <h2 style="color: #FFFFFF;">Compliance and trust live on <em>different islands</em>.<br>They shouldn't.</h2>
+    <p class="section-sub">
+      Carriers manage filings on government portals. Brokers vet carriers on Carrier411 and RMIS. Shippers run separate audits on top of all of it. Every party pays for partial information and still gets burned by the gaps between systems.
+    </p>
+  </div>
+
+  <div class="problem-grid" style="position: relative;">
+    <div class="problem-card bad">
+      <div class="problem-tag">The current state</div>
+      <h3 style="color: #FFFFFF;">Five tools. Three roles. No source of truth.</h3>
+      <ul class="problem-list">
+        <li>Carriers juggle FMCSA, IRS, UCR, IRP, IFTA, and 50 state portals</li>
+        <li>Brokers pay for Carrier411, MyCarrierPackets, RMIS, Highway separately</li>
+        <li>Shippers run yet another audit before tendering a load</li>
+        <li>Double-brokering scams cost the industry billions per year</li>
+        <li>A carrier's expired insurance is found out after the claim, not before</li>
+        <li>Nobody trusts anyone's data because everyone has different data</li>
+      </ul>
+    </div>
+    <div class="problem-card good">
+      <div class="problem-tag">With FleetAxis</div>
+      <h3 style="color: #FFFFFF;">One axis. One source of truth. Three roles.</h3>
+      <ul class="problem-list">
+        <li>Every credential, filing, and renewal in a single vault</li>
+        <li>Real-time verification of any USDOT, MC, or broker bond</li>
+        <li>Live insurance certificates synced from underwriters</li>
+        <li>Double-brokering and identity-fraud detection built in</li>
+        <li>Two-way trust scores visible to both sides of every load</li>
+        <li>Audit-ready records the moment freight is questioned</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MODULES ============ -->
+<section id="coverage" class="modules">
+  <div class="section-head">
+    <div class="section-eyebrow">Coverage</div>
+    <h2>Every layer of the regulatory stack.</h2>
+    <p class="section-sub">
+      We start at the federal core and work outward to the long tail of state-specific permits and weight-distance taxes that nobody else bothers to support.
+    </p>
+  </div>
+
+  <div class="modules-grid">
+    <div class="module">
+      <div class="module-num">01</div>
+      <div class="module-icon">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M18 4 L30 9 L30 19 C30 25 24 30 18 32 C12 30 6 25 6 19 L6 9 Z"/>
+          <path d="M13 18 L17 22 L24 14"/>
+        </svg>
+      </div>
+      <h3>Federal Registration</h3>
+      <p>USDOT, MC operating authority, MCS-150 biennial updates, BOC-3 process agents, and full Motus migration support.</p>
+      <div class="module-tags">
+        <span class="module-tag">FMCSA</span>
+        <span class="module-tag">USDOT</span>
+        <span class="module-tag">MC/FF/MX</span>
+        <span class="module-tag">BOC-3</span>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">02</div>
+      <div class="module-icon">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="6" y="8" width="24" height="22" rx="2"/>
+          <line x1="6" y1="14" x2="30" y2="14"/>
+          <line x1="11" y1="20" x2="20" y2="20"/>
+          <line x1="11" y1="25" x2="17" y2="25"/>
+        </svg>
+      </div>
+      <h3>Annual & Quarterly Filings</h3>
+      <p>UCR renewals, IFTA quarterly returns, IRP apportioned registration, and HVUT Form 2290 — all filed on your schedule, on your behalf.</p>
+      <div class="module-tags">
+        <span class="module-tag">UCR</span>
+        <span class="module-tag">IFTA</span>
+        <span class="module-tag">IRP</span>
+        <span class="module-tag">HVUT 2290</span>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">03</div>
+      <div class="module-icon">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="18" cy="13" r="5"/>
+          <path d="M8 30 C8 24 12 21 18 21 C24 21 28 24 28 30"/>
+        </svg>
+      </div>
+      <h3>Driver Compliance</h3>
+      <p>Driver qualification files, MVR pulls, medical certificate tracking via the National Registry, drug & alcohol Clearinghouse queries.</p>
+      <div class="module-tags">
+        <span class="module-tag">DQ Files</span>
+        <span class="module-tag">Clearinghouse</span>
+        <span class="module-tag">MVR</span>
+        <span class="module-tag">Med Cert</span>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">04</div>
+      <div class="module-icon">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="18" cy="18" r="14"/>
+          <path d="M4 18 L32 18"/>
+          <path d="M18 4 C22 8 24 13 24 18 C24 23 22 28 18 32 C14 28 12 23 12 18 C12 13 14 8 18 4"/>
+        </svg>
+      </div>
+      <h3>State Authorities</h3>
+      <p>The long tail nobody supports — CA MCP, NY HUT, KY KYU, OH PUCO, PA PUC, TX DMV, NM and OR weight-distance, plus intrastate authority in 38 states.</p>
+      <div class="module-tags">
+        <span class="module-tag">CA MCP</span>
+        <span class="module-tag">NY HUT</span>
+        <span class="module-tag">KY KYU</span>
+        <span class="module-tag">+38 more</span>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">05</div>
+      <div class="module-icon">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="6" y="6" width="24" height="24" rx="2"/>
+          <path d="M12 14 L24 14 M12 18 L20 18 M12 22 L22 22 M12 26 L18 26"/>
+        </svg>
+      </div>
+      <h3>Document Vault</h3>
+      <p>Every certificate, decal, permit, and confirmation in one searchable archive. Audit-ready export packages generated on demand.</p>
+      <div class="module-tags">
+        <span class="module-tag">Audit-ready</span>
+        <span class="module-tag">Versioned</span>
+        <span class="module-tag">Encrypted</span>
+      </div>
+    </div>
+
+    <div class="module">
+      <div class="module-num">06</div>
+      <div class="module-icon">
+        <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 22 L14 14 L20 20 L30 10"/>
+          <path d="M22 10 L30 10 L30 18"/>
+        </svg>
+      </div>
+      <h3>CSA & Safety Posture</h3>
+      <p>SMS BASIC monitoring under the new CSA categories, DataQs challenge tracking, and inspection summaries by VIN and driver.</p>
+      <div class="module-tags">
+        <span class="module-tag">CSA 2026</span>
+        <span class="module-tag">DataQs</span>
+        <span class="module-tag">SMS</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OPERATIONS ============ -->
+<section style="background: var(--bg-charcoal); border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden;">
+  <div style="position: absolute; top: 20%; left: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(124,58,237,0.10) 0%, transparent 60%); pointer-events: none; filter: blur(40px);"></div>
+  <div style="position: absolute; bottom: 20%; right: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(91,33,182,0.10) 0%, transparent 60%); pointer-events: none; filter: blur(40px);"></div>
+
+  <div class="section-head" style="position: relative;">
+    <div class="section-eyebrow">Run the Business</div>
+    <h2 style="color: #FFFFFF;">Beyond compliance.<br>The full <em>operational</em> stack.</h2>
+    <p class="section-sub">
+      From the moment a carrier joins your network to the moment your factor gets the invoice — every document, every signature, every disbursement flows through one system. Stop emailing PDFs.
+    </p>
+  </div>
+
+  <!-- Workflow timeline -->
+  <div style="max-width: 1200px; margin: 0 auto; position: relative;">
+
+    <!-- Workflow steps grid -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
+
+      <!-- Step 1: Onboarding -->
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 28px 26px; position: relative;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(124,58,237,0.15); border: 1px solid rgba(168,85,247,0.4); display: flex; align-items: center; justify-content: center; color: #C084FC; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600;">01</div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #5C5C6E; text-transform: uppercase; font-weight: 600;">Onboarding</div>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #FFFFFF; margin-bottom: 10px; letter-spacing: -0.01em;">Carrier Setup Packets</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.6; margin-bottom: 18px;">Branded onboarding packets sent to carriers in one click. Carrier completes the W-9, signs the broker-carrier agreement, uploads insurance, and authorizes COI distribution — all inside FleetAxis.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">W-9</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Carrier agreement</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">E-signature</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Banking info</span>
+        </div>
+      </div>
+
+      <!-- Step 2: Insurance -->
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 28px 26px; position: relative;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(124,58,237,0.15); border: 1px solid rgba(168,85,247,0.4); display: flex; align-items: center; justify-content: center; color: #C084FC; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600;">02</div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #5C5C6E; text-transform: uppercase; font-weight: 600;">Insurance</div>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #FFFFFF; margin-bottom: 10px; letter-spacing: -0.01em;">COI Requests, Auto-Sent</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.6; margin-bottom: 18px;">Once authorized, FleetAxis requests Certificates of Insurance directly from the carrier's underwriter using ACORD-standard formats. Renewals trigger automatic re-requests. No more chasing PDFs by email.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">ACORD 25</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Auto-renewal</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Underwriter direct</span>
+        </div>
+      </div>
+
+      <!-- Step 3: Document Exchange -->
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 28px 26px; position: relative;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(124,58,237,0.15); border: 1px solid rgba(168,85,247,0.4); display: flex; align-items: center; justify-content: center; color: #C084FC; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600;">03</div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #5C5C6E; text-transform: uppercase; font-weight: 600;">Document Exchange</div>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #FFFFFF; margin-bottom: 10px; letter-spacing: -0.01em;">Rate Cons & BOLs in One Place</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.6; margin-bottom: 18px;">Rate confirmations, bills of lading, proofs of delivery, and lumper receipts all flow through the carrier's profile. Counterparties see them in real time. Every document gets a timestamp and audit trail.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Rate cons</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">BOLs</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">PODs</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Lumper receipts</span>
+        </div>
+      </div>
+
+      <!-- Step 4: Invoicing -->
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 28px 26px; position: relative;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(124,58,237,0.15); border: 1px solid rgba(168,85,247,0.4); display: flex; align-items: center; justify-content: center; color: #C084FC; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600;">04</div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #5C5C6E; text-transform: uppercase; font-weight: 600;">Invoicing</div>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #FFFFFF; margin-bottom: 10px; letter-spacing: -0.01em;">Auto-Generated Invoices</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.6; margin-bottom: 18px;">When the BOL clears and the rate con is signed, FleetAxis generates the invoice automatically with line items, accessorials, and supporting docs attached. Sent to the brokerage and the carrier's factor in one motion.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Auto-generation</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Accessorials</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Doc bundle</span>
+        </div>
+      </div>
+
+      <!-- Step 5: Factoring -->
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 28px 26px; position: relative;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(124,58,237,0.15); border: 1px solid rgba(168,85,247,0.4); display: flex; align-items: center; justify-content: center; color: #C084FC; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600;">05</div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #5C5C6E; text-transform: uppercase; font-weight: 600;">Factoring</div>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #FFFFFF; margin-bottom: 10px; letter-spacing: -0.01em;">Factor Sync, Built In</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.6; margin-bottom: 18px;">Direct integration with major factoring companies. Invoices and supporting docs sync to the factor automatically. Carriers get paid faster, brokerages stop fielding "where's my doc package" calls.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Factor APIs</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">NOA tracking</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Days-to-pay</span>
+        </div>
+      </div>
+
+      <!-- Step 6: Audit -->
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 28px 26px; position: relative;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(124,58,237,0.15); border: 1px solid rgba(168,85,247,0.4); display: flex; align-items: center; justify-content: center; color: #C084FC; font-family: 'Geist Mono', monospace; font-size: 13px; font-weight: 600;">06</div>
+          <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.12em; color: #5C5C6E; text-transform: uppercase; font-weight: 600;">Records</div>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; color: #FFFFFF; margin-bottom: 10px; letter-spacing: -0.01em;">Audit-Ready Vault</h3>
+        <p style="font-size: 13px; color: #9A9AAB; line-height: 1.6; margin-bottom: 18px;">Every document, every version, every signature stays in the vault forever. When a claim happens, when an audit notice arrives, when a contingent cargo carrier asks — you export the full file in 30 seconds.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Versioned</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Encrypted</span>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 10px; padding: 4px 9px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: #B8B8C8;">Export bundles</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<section id="dashboard" class="dashboard-section">
+  <div class="section-head">
+    <div class="section-eyebrow">Inside the Platform</div>
+    <h2 style="color: #FFFFFF;">Every credential, deadline,<br>and document on <em>one screen</em>.</h2>
+    <p class="section-sub">
+      A live view of every filing across every entity. Renewals, audit risk, document expirations, and team workload — visible the moment you log in.
+    </p>
+  </div>
+
+  <div class="dashboard-frame">
+    <div class="db-titlebar">
+      <span class="db-dot"></span>
+      <span class="db-dot"></span>
+      <span class="db-dot"></span>
+      <span class="db-url">app.fleetaxis.com / dashboard / compliance</span>
+    </div>
+    <div class="db-body">
+      <aside class="db-sidebar">
+        <div class="db-sb-section">Operations</div>
+        <div class="db-sb-item active">
+          <svg class="db-sb-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><line x1="8" y1="2" x2="8" y2="8"/><line x1="8" y1="8" x2="12" y2="10"/></svg>
+          Compliance Calendar
+        </div>
+        <div class="db-sb-item">
+          <svg class="db-sb-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="3" width="10" height="10" rx="1"/><line x1="3" y1="6" x2="13" y2="6"/></svg>
+          Filings Queue
+        </div>
+        <div class="db-sb-item">
+          <svg class="db-sb-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M3 6 L13 6 L11 13 L5 13 Z"/><path d="M5 6 L5 4 C5 3 6 2 8 2 C10 2 11 3 11 4 L11 6"/></svg>
+          Document Vault
+        </div>
+        <div class="db-sb-section">Coverage</div>
+        <div class="db-sb-item">
+          <svg class="db-sb-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M8 2 L13 4 L13 9 C13 12 11 14 8 15 C5 14 3 12 3 9 L3 4 Z"/></svg>
+          Federal · FMCSA
+        </div>
+        <div class="db-sb-item">
+          <svg class="db-sb-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="8" r="6"/><path d="M2 8 L14 8"/></svg>
+          State Authorities
+        </div>
+        <div class="db-sb-item">
+          <svg class="db-sb-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="8" cy="6" r="3"/><path d="M3 14 C3 11 5 10 8 10 C11 10 13 11 13 14"/></svg>
+          Drivers
+        </div>
+        <div class="db-sb-item">
+          <svg class="db-sb-item-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="6" width="9" height="6"/><path d="M11 8 L14 8 L14 12 L11 12"/><circle cx="5" cy="13" r="1.3"/><circle cx="12" cy="13" r="1.3"/></svg>
+          Vehicles
+        </div>
+      </aside>
+
+      <main class="db-main">
+        <div class="db-h">
+          <div>
+            <div class="db-h-title">Compliance Calendar</div>
+            <div class="db-h-meta" style="margin-top: 4px;">USDOT 3814927 · Acme Trucking LLC · 12 power units</div>
+          </div>
+          <div class="db-h-meta">Last sync: 4 min ago</div>
+        </div>
+
+        <div class="db-stats">
+          <div class="db-stat">
+            <div class="db-stat-label">Compliance score</div>
+            <div class="db-stat-val success">94<span style="font-size:18px;color:var(--text-faint);">/100</span></div>
+            <div class="db-stat-sub">+2 vs last month</div>
+          </div>
+          <div class="db-stat">
+            <div class="db-stat-label">Active credentials</div>
+            <div class="db-stat-val">37</div>
+            <div class="db-stat-sub">across 11 jurisdictions</div>
+          </div>
+          <div class="db-stat">
+            <div class="db-stat-label">Due in 30 days</div>
+            <div class="db-stat-val warn">4</div>
+            <div class="db-stat-sub">2 require action</div>
+          </div>
+          <div class="db-stat">
+            <div class="db-stat-label">Overdue</div>
+            <div class="db-stat-val danger">1</div>
+            <div class="db-stat-sub">IFTA Q2 — flagged</div>
+          </div>
+        </div>
+
+        <div class="db-table-h">
+          <span>Filing</span>
+          <span>Authority</span>
+          <span>Due</span>
+          <span>Status</span>
+          <span></span>
+        </div>
+        <div class="db-row">
+          <div>
+            <div class="db-cell-strong">IFTA Quarterly · Q2 2026</div>
+            <div class="db-cell-mono">12 vehicles · 47,120 mi</div>
+          </div>
+          <div class="db-cell-mono">IFTA · TX</div>
+          <div class="db-cell-mono" style="color: var(--danger);">4 days late</div>
+          <div><span class="db-pill db-pill-danger">overdue</span></div>
+          <div class="db-action">file now →</div>
+        </div>
+        <div class="db-row">
+          <div>
+            <div class="db-cell-strong">UCR 2027 Renewal</div>
+            <div class="db-cell-mono">Bracket B · 12 vehicles</div>
+          </div>
+          <div class="db-cell-mono">UCR Plan</div>
+          <div class="db-cell-mono">18 days</div>
+          <div><span class="db-pill db-pill-warn">queued</span></div>
+          <div class="db-action">review →</div>
+        </div>
+        <div class="db-row">
+          <div>
+            <div class="db-cell-strong">CA MCP Renewal</div>
+            <div class="db-cell-mono">CA-0492871</div>
+          </div>
+          <div class="db-cell-mono">CA DMV</div>
+          <div class="db-cell-mono">26 days</div>
+          <div><span class="db-pill db-pill-warn">queued</span></div>
+          <div class="db-action">review →</div>
+        </div>
+        <div class="db-row">
+          <div>
+            <div class="db-cell-strong">Form 2290 — HVUT</div>
+            <div class="db-cell-mono">Tax period 2026</div>
+          </div>
+          <div class="db-cell-mono">IRS</div>
+          <div class="db-cell-mono">62 days</div>
+          <div><span class="db-pill db-pill-ok">scheduled</span></div>
+          <div class="db-action">view →</div>
+        </div>
+        <div class="db-row">
+          <div>
+            <div class="db-cell-strong">MCS-150 Biennial Update</div>
+            <div class="db-cell-mono">Filed 04/12/2026</div>
+          </div>
+          <div class="db-cell-mono">FMCSA</div>
+          <div class="db-cell-mono">Mar 2028</div>
+          <div><span class="db-pill db-pill-ok">current</span></div>
+          <div class="db-action">view →</div>
+        </div>
+      </main>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VERIFICATION ============ -->
+<section style="background: #050507; border-bottom: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden;">
+  <div style="position: absolute; top: 30%; right: -10%; width: 700px; height: 700px; background: radial-gradient(circle, rgba(124,58,237,0.10) 0%, transparent 60%); pointer-events: none; filter: blur(40px);"></div>
+
+  <div class="section-head" style="position: relative;">
+    <div class="section-eyebrow">Verification Engine</div>
+    <h2 style="color: #FFFFFF;">Type a USDOT or MC.<br>Know <em>everything</em> in seconds.</h2>
+    <p class="section-sub">
+      Real-time pulls from FMCSA SAFER, the L&I database, state DOTs, insurance underwriters, and the FleetAxis network. Every party. Every credential. Every red flag.
+    </p>
+  </div>
+
+  <div style="max-width: 1100px; margin: 0 auto; position: relative;">
+    <!-- Verification result mockup -->
+    <div style="background: #0A0A10; border: 1px solid rgba(168,85,247,0.25); border-radius: 20px; overflow: hidden; box-shadow: 0 40px 100px -20px rgba(0,0,0,0.8), 0 0 0 1px rgba(168,85,247,0.15);">
+
+      <!-- Search bar -->
+      <div style="padding: 18px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); display: flex; align-items: center; gap: 14px;">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#A855F7" stroke-width="1.8"><circle cx="8" cy="8" r="5.5"/><path d="M12 12 L16 16"/></svg>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 14px; color: #F8F8FB;">USDOT 1523817</span>
+        <span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #5C5C6E; margin-left: auto;">~ 1.2s · 12 sources cross-referenced</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 0;">
+
+        <!-- Left: Identity & verification -->
+        <div style="padding: 28px 32px; border-right: 1px solid rgba(255,255,255,0.06);">
+
+          <!-- Header w/ trust score -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div>
+              <div style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 6px;">Motor Carrier · For-Hire</div>
+              <div style="font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: #FFFFFF; margin-bottom: 4px;">MIDWEST FREIGHT SOLUTIONS LLC</div>
+              <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #9A9AAB;">USDOT 1523817 · MC-583921 · Springfield, IL</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 4px;">Trust Score</div>
+              <div style="font-size: 32px; font-weight: 600; color: #6EE7B7; line-height: 1; letter-spacing: -0.02em;">A−</div>
+              <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #6EE7B7; margin-top: 2px;">87 / 100</div>
+            </div>
+          </div>
+
+          <!-- Verification checks -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="padding: 12px 14px; background: rgba(110,231,183,0.06); border: 1px solid rgba(110,231,183,0.2); border-radius: 8px;">
+              <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 6px;">Operating Authority</div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 7px; height: 7px; background: #6EE7B7; border-radius: 50%; box-shadow: 0 0 6px rgba(110,231,183,0.6);"></span>
+                <span style="font-size: 13px; color: #F8F8FB; font-weight: 500;">Active · Common</span>
+              </div>
+            </div>
+            <div style="padding: 12px 14px; background: rgba(110,231,183,0.06); border: 1px solid rgba(110,231,183,0.2); border-radius: 8px;">
+              <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 6px;">Insurance · BIPD</div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 7px; height: 7px; background: #6EE7B7; border-radius: 50%; box-shadow: 0 0 6px rgba(110,231,183,0.6);"></span>
+                <span style="font-size: 13px; color: #F8F8FB; font-weight: 500;">$1M · Verified</span>
+              </div>
+            </div>
+            <div style="padding: 12px 14px; background: rgba(110,231,183,0.06); border: 1px solid rgba(110,231,183,0.2); border-radius: 8px;">
+              <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 6px;">Cargo Insurance</div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 7px; height: 7px; background: #6EE7B7; border-radius: 50%; box-shadow: 0 0 6px rgba(110,231,183,0.6);"></span>
+                <span style="font-size: 13px; color: #F8F8FB; font-weight: 500;">$100K · Active</span>
+              </div>
+            </div>
+            <div style="padding: 12px 14px; background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.25); border-radius: 8px;">
+              <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 6px;">UCR · 2026</div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 7px; height: 7px; background: #FBBF24; border-radius: 50%; box-shadow: 0 0 6px rgba(251,191,36,0.6);"></span>
+                <span style="font-size: 13px; color: #F8F8FB; font-weight: 500;">Renewal in 14d</span>
+              </div>
+            </div>
+            <div style="padding: 12px 14px; background: rgba(110,231,183,0.06); border: 1px solid rgba(110,231,183,0.2); border-radius: 8px;">
+              <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 6px;">Safety Rating</div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 7px; height: 7px; background: #6EE7B7; border-radius: 50%; box-shadow: 0 0 6px rgba(110,231,183,0.6);"></span>
+                <span style="font-size: 13px; color: #F8F8FB; font-weight: 500;">Satisfactory</span>
+              </div>
+            </div>
+            <div style="padding: 12px 14px; background: rgba(110,231,183,0.06); border: 1px solid rgba(110,231,183,0.2); border-radius: 8px;">
+              <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 6px;">Identity Verified</div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 7px; height: 7px; background: #6EE7B7; border-radius: 50%; box-shadow: 0 0 6px rgba(110,231,183,0.6);"></span>
+                <span style="font-size: 13px; color: #F8F8FB; font-weight: 500;">EIN matched</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Activity & flags -->
+        <div style="padding: 28px 32px;">
+
+          <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #5C5C6E; margin-bottom: 16px;">Network Signals</div>
+
+          <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px;">
+
+            <div style="display: flex; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <span style="width: 6px; height: 6px; background: #6EE7B7; border-radius: 50%; flex-shrink: 0; margin-top: 6px; box-shadow: 0 0 6px rgba(110,231,183,0.6);"></span>
+              <div>
+                <div style="font-size: 13px; color: #F8F8FB; font-weight: 500; margin-bottom: 2px;">847 verified loads in last 12 months</div>
+                <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E;">avg pay-out · 28 days</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <span style="width: 6px; height: 6px; background: #6EE7B7; border-radius: 50%; flex-shrink: 0; margin-top: 6px; box-shadow: 0 0 6px rgba(110,231,183,0.6);"></span>
+              <div>
+                <div style="font-size: 13px; color: #F8F8FB; font-weight: 500; margin-bottom: 2px;">No double-brokering flags</div>
+                <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E;">checked across FleetAxis network</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+              <span style="width: 6px; height: 6px; background: #FBBF24; border-radius: 50%; flex-shrink: 0; margin-top: 6px; box-shadow: 0 0 6px rgba(251,191,36,0.6);"></span>
+              <div>
+                <div style="font-size: 13px; color: #F8F8FB; font-weight: 500; margin-bottom: 2px;">3 inspections last 24 months</div>
+                <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E;">1 OOS · review CSA detail</div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+              <span style="width: 6px; height: 6px; background: #6EE7B7; border-radius: 50%; flex-shrink: 0; margin-top: 6px; box-shadow: 0 0 6px rgba(110,231,183,0.6);"></span>
+              <div>
+                <div style="font-size: 13px; color: #F8F8FB; font-weight: 500; margin-bottom: 2px;">Authority active since 2009</div>
+                <div style="font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E;">no lapses · no revocations</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <button style="flex: 1; background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%); color: white; border: none; padding: 11px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 18px -4px rgba(124,58,237,0.6);">Add to network</button>
+            <button style="flex: 1; background: rgba(255,255,255,0.05); color: #F8F8FB; border: 1px solid rgba(255,255,255,0.1); padding: 11px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;">Full report →</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Caption below -->
+    <div style="text-align: center; margin-top: 32px; font-family: 'Geist Mono', monospace; font-size: 12px; color: #5C5C6E; letter-spacing: 0.05em;">
+      Live FMCSA SAFER · Insurance underwriter feed · State DOT records · FleetAxis network · Updated continuously
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRUSTED NETWORK ============ -->
+<section style="background: #050507; border-bottom: 1px solid rgba(255,255,255,0.06); position: relative; overflow: hidden;">
+  <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1100px; height: 700px; background: radial-gradient(ellipse, rgba(124,58,237,0.12) 0%, transparent 60%); pointer-events: none; filter: blur(40px);"></div>
+
+  <div class="section-head" style="position: relative;">
+    <div class="section-eyebrow">FleetAxis Trusted Network</div>
+    <h2 style="color: #FFFFFF;">A vetted directory<br>of every <em>partner</em> you actually need.</h2>
+    <p class="section-sub">
+      Insurance brokers, factoring companies, ELD providers, fuel cards, permit services, accountants, attorneys — every category our customers ask about. Every partner verified, reviewed, and rated by the FleetAxis community.
+    </p>
+  </div>
+
+  <div style="max-width: 1200px; margin: 0 auto; position: relative;">
+
+    <!-- Categories grid -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px;">
+
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 22px 20px; transition: all 0.3s;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #5C5C6E; margin-bottom: 8px; font-weight: 600;">CATEGORY</div>
+        <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">Insurance</div>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C084FC;">42 verified providers</div>
+      </div>
+
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 22px 20px;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #5C5C6E; margin-bottom: 8px; font-weight: 600;">CATEGORY</div>
+        <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">Factoring</div>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C084FC;">28 verified providers</div>
+      </div>
+
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 22px 20px;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #5C5C6E; margin-bottom: 8px; font-weight: 600;">CATEGORY</div>
+        <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">ELD & Telematics</div>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C084FC;">36 verified providers</div>
+      </div>
+
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 22px 20px;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #5C5C6E; margin-bottom: 8px; font-weight: 600;">CATEGORY</div>
+        <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">Fuel & IFTA</div>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C084FC;">19 verified providers</div>
+      </div>
+
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 22px 20px;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #5C5C6E; margin-bottom: 8px; font-weight: 600;">CATEGORY</div>
+        <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">Legal & DOT defense</div>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C084FC;">24 verified providers</div>
+      </div>
+
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 22px 20px;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #5C5C6E; margin-bottom: 8px; font-weight: 600;">CATEGORY</div>
+        <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">Drug & alcohol</div>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C084FC;">17 verified providers</div>
+      </div>
+
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 22px 20px;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #5C5C6E; margin-bottom: 8px; font-weight: 600;">CATEGORY</div>
+        <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">Permits & escort</div>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C084FC;">14 verified providers</div>
+      </div>
+
+      <div style="background: #0A0A10; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 22px 20px;">
+        <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.12em; color: #5C5C6E; margin-bottom: 8px; font-weight: 600;">CATEGORY</div>
+        <div style="font-size: 16px; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">Accounting & tax</div>
+        <div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #C084FC;">31 verified providers</div>
+      </div>
+    </div>
+
+    <!-- Trust callout -->
+    <div style="background: linear-gradient(135deg, rgba(124,58,237,0.10) 0%, rgba(91,33,182,0.05) 100%); border: 1px solid rgba(168,85,247,0.3); border-radius: 16px; padding: 32px 36px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center;">
+      <div>
+        <div style="display: inline-flex; align-items: center; gap: 6px; font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #C084FC; padding: 4px 10px; border: 1px solid rgba(168,85,247,0.4); border-radius: 100px; background: rgba(124,58,237,0.15); margin-bottom: 14px; font-weight: 600;">For Service Providers</div>
+        <h3 style="font-size: 24px; font-weight: 600; color: #FFFFFF; margin-bottom: 10px; letter-spacing: -0.02em;">Become a FleetAxis Trusted Partner.</h3>
+        <p style="font-size: 14px; color: #B8B8C8; line-height: 1.6;">Join the directory, get vetted, get matched with the carriers and brokers who already trust FleetAxis. Performance-based listings. Transparent reviews. Direct referral pipeline.</p>
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <a href="#" style="background: linear-gradient(135deg, #7C3AED 0%, #A855F7 100%); color: white; padding: 13px 22px; border-radius: 10px; font-size: 14px; font-weight: 600; text-decoration: none; box-shadow: 0 8px 24px -6px rgba(124,58,237,0.6); white-space: nowrap;">Apply to be listed →</a>
+      </div>
+    </div>
+
+    <!-- Disclosure footer -->
+    <div style="text-align: center; margin-top: 28px; font-family: 'Geist Mono', monospace; font-size: 11px; color: #5C5C6E; letter-spacing: 0.05em; line-height: 1.7;">
+      FleetAxis may receive referral compensation from non-regulated service providers in this directory.<br>Insurance products are referred without compensation in compliance with state licensing requirements.
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="pricing" style="background: var(--bg-charcoal); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); position: relative; overflow: hidden;">
+  <div style="position: absolute; top: 0; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(124,58,237,0.10) 0%, transparent 60%); pointer-events: none; filter: blur(40px);"></div>
+  <div style="position: absolute; bottom: 0; left: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(91,33,182,0.10) 0%, transparent 60%); pointer-events: none; filter: blur(40px);"></div>
+  <div class="section-head" style="position: relative;">
+    <div class="section-eyebrow">Pricing</div>
+    <h2 style="color: #FFFFFF;">A plan for <em>every</em><br>regulated entity type.</h2>
+    <p class="section-sub">
+      Subscription matches what you actually need. Every plan includes compliance, verification, document vault, and Trusted Network access. Filing and government fees billed at exact cost — no hidden markups.
+    </p>
+  </div>
+
+  <!-- Six-tier pricing grid -->
+  <div style="max-width: 1200px; margin: 0 auto 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; position: relative;">
+
+    <!-- Owner-Operator -->
+    <div class="price-card">
+      <div class="price-name">Owner-Operator</div>
+      <div class="price-amount">
+        <span class="currency">$</span><span class="num">39</span><span class="period">/ mo</span>
+      </div>
+      <div class="price-fleet">1–2 power units · Solo</div>
+      <ul class="price-features">
+        <li>Federal & state compliance core</li>
+        <li>UCR · IFTA · IRP · 2290 · BOC-3</li>
+        <li>Driver qualification file</li>
+        <li>Carrier setup packet (W-9, COI sharing)</li>
+        <li>Unlimited broker verification</li>
+        <li>Auto-invoicing to factor</li>
+      </ul>
+      <a href="#cta" class="price-cta">Start free 30 days</a>
+    </div>
+
+    <!-- Motor Carrier (FEATURED) -->
+    <div class="price-card featured">
+      <div class="price-name">Motor Carrier</div>
+      <div class="price-amount">
+        <span class="currency">$</span><span class="num">99</span><span class="period">/ mo</span>
+      </div>
+      <div class="price-fleet">3–25 trucks · Property, HHG, or specialty</div>
+      <ul class="price-features">
+        <li>Everything in Owner-Operator</li>
+        <li>Multi-driver DQ files & Clearinghouse</li>
+        <li>Multi-state authority tracking</li>
+        <li>Rate con & BOL document exchange</li>
+        <li>Auto-invoice to broker AP & factor</li>
+        <li>Days-to-pay history on every broker</li>
+        <li>Team access (up to 5 seats)</li>
+      </ul>
+      <a href="#cta" class="price-cta">Start free 30 days</a>
+    </div>
+
+    <!-- Hazmat / Specialty -->
+    <div class="price-card">
+      <div class="price-name">Hazmat / Specialty</div>
+      <div class="price-amount">
+        <span class="currency">$</span><span class="num">149</span><span class="period">/ mo</span>
+      </div>
+      <div class="price-fleet">Hazmat · Tanker · Oversize · IEP</div>
+      <ul class="price-features">
+        <li>Everything in Motor Carrier</li>
+        <li>HM Safety Permit management</li>
+        <li>HMSP renewals & PHMSA filings</li>
+        <li>State-specific hazmat permits</li>
+        <li>Equipment & chassis inspections (IEP)</li>
+        <li>Specialty endorsement tracking</li>
+      </ul>
+      <a href="#cta" class="price-cta">Start free 30 days</a>
+    </div>
+
+    <!-- Broker / Freight Forwarder -->
+    <div class="price-card">
+      <div class="price-name">Broker / Forwarder</div>
+      <div class="price-amount">
+        <span class="currency">$</span><span class="num">199</span><span class="period">/ mo</span>
+      </div>
+      <div class="price-fleet">Per brokerage · Onboarding workflow</div>
+      <ul class="price-features">
+        <li>Unlimited carrier verification lookups</li>
+        <li>Branded carrier setup packets</li>
+        <li>Live FMCSA, insurance & W-9 sync</li>
+        <li>Double-brokering fraud detection</li>
+        <li>Auto rate-con dispatch & BOL collection</li>
+        <li>BMC-84 / BMC-85 bond compliance</li>
+        <li>API access for TMS integration</li>
+      </ul>
+      <a href="#cta" class="price-cta">Start free 30 days</a>
+    </div>
+
+    <!-- Passenger Carrier -->
+    <div class="price-card">
+      <div class="price-name">Passenger Carrier</div>
+      <div class="price-amount">
+        <span class="currency">$</span><span class="num">129</span><span class="period">/ mo</span>
+      </div>
+      <div class="price-fleet">Motorcoach · Charter · Shuttle · Limo</div>
+      <ul class="price-features">
+        <li>Full passenger compliance suite</li>
+        <li>OP-1(P) authority management</li>
+        <li>$5M liability tracking & filings</li>
+        <li>Driver qualification & Clearinghouse</li>
+        <li>Inspection & ELD records</li>
+        <li>Charter contract document exchange</li>
+      </ul>
+      <a href="#cta" class="price-cta">Start free 30 days</a>
+    </div>
+
+    <!-- Shipper / Enterprise -->
+    <div class="price-card">
+      <div class="price-name">Shipper / Enterprise</div>
+      <div class="price-amount">
+        <span style="font-size: 22px; color: var(--text-dim); font-weight: 400;">Custom</span>
+      </div>
+      <div class="price-fleet">Shippers · Large fleets · 3PLs · White-label</div>
+      <ul class="price-features">
+        <li>Pre-tender verification on every load</li>
+        <li>Carrier & broker scorecards</li>
+        <li>Multi-entity & multi-division support</li>
+        <li>Role-based team access (unlimited)</li>
+        <li>Dedicated account manager</li>
+        <li>White-label & co-branded options</li>
+        <li>Volume API & EDI integrations</li>
+      </ul>
+      <a href="#cta" class="price-cta">Talk to sales</a>
+    </div>
+
+  </div>
+
+  <!-- Service Provider tier -->
+  <div style="max-width: 1200px; margin: 16px auto 0; padding: 24px 28px; background: linear-gradient(135deg, rgba(124,58,237,0.08) 0%, transparent 100%); border: 1px solid rgba(168,85,247,0.25); border-radius: 14px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; position: relative;">
+    <div style="flex: 1; min-width: 280px;">
+      <div style="font-family: 'Geist Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: #C084FC; margin-bottom: 8px; font-weight: 600;">Service Provider Tier · From $79/mo</div>
+      <div style="font-size: 17px; font-weight: 600; color: #FFFFFF; margin-bottom: 4px; letter-spacing: -0.01em;">For dispatchers, BOC-3 agents, drug consortiums, CDL schools, tag agencies, and accountants.</div>
+      <div style="font-size: 13px; color: #9A9AAB;">Manage your client roster, distribute compliance documents, and earn referral revenue from the Trusted Network.</div>
+    </div>
+    <a href="#cta" style="background: rgba(255,255,255,0.05); color: #FFFFFF; padding: 11px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,0.12); white-space: nowrap;">See service plans →</a>
+  </div>
+
+  <div class="pricing-note">
+    No annual contracts. Cancel anytime. Filing and government fees billed at exact cost. White-label and enterprise contracts available on request.
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta" id="cta">
+  <div class="cta-inner">
+    <div class="section-eyebrow">Free verification</div>
+    <h2 style="color: #FFFFFF;">Type any USDOT or MC.<br>See the <em>full picture</em>.</h2>
+    <p class="section-sub" style="margin-top: 16px;">
+      Authority status, insurance, safety record, network signals, and red flags — pulled live from FMCSA, state DOTs, and the FleetAxis network. No card. No call.
+    </p>
+    <div class="cta-form">
+      <input type="text" placeholder="USDOT or MC number — e.g. 3814927" />
+      <button>Verify →</button>
+    </div>
+    <div class="cta-tag">~ 1.2 seconds · 12 sources cross-referenced · No account required</div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo" style="font-size: 20px;">
+        <svg class="logo-mark" viewBox="0 0 32 32" fill="none" style="width: 32px; height: 32px;">
+          <circle cx="16" cy="16" r="14" stroke="white" stroke-width="0.5" opacity="0.3"/>
+          <circle cx="16" cy="16" r="11" stroke="#A855F7" stroke-width="0.8" opacity="0.5"/>
+          <line x1="16" y1="16" x2="16" y2="3" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="16" y1="16" x2="27.3" y2="22.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <line x1="16" y1="16" x2="4.7" y2="22.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="2.5" fill="#A855F7"/>
+        </svg>
+        FleetAxis
+      </div>
+      <p class="footer-tag">Unified Transportation Compliance. The single platform where carriers, brokers, and shippers manage every filing — and verify each other before a load ever moves.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="#">For Carriers</a></li>
+        <li><a href="#">For Brokers</a></li>
+        <li><a href="#">For Shippers</a></li>
+        <li><a href="#">Verification API</a></li>
+        <li><a href="#">Document vault</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Compliance</h4>
+      <ul>
+        <li><a href="#">Federal filings</a></li>
+        <li><a href="#">State authorities</a></li>
+        <li><a href="#">Driver compliance</a></li>
+        <li><a href="#">Motus transition</a></li>
+        <li><a href="#">2026 changes</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Partners</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 FleetAxis · An independent software platform · Not affiliated with the FMCSA, USDOT, or any government agency.</span>
+    <span>v1.0 · Built for the road</span>
+  </div>
+</footer>
+
+</body>
+</html>
